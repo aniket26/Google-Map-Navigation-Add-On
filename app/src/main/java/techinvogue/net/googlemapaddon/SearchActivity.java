@@ -5,7 +5,7 @@ import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -36,10 +36,22 @@ public class SearchActivity extends FragmentActivity {
         setUpMapIfNeeded();
     }
 
+    public void changeView(View v)
+    {
+        if (mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL)//if the map type is normal, change to satellite view or vice versa
+        {
+            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        } else
+        {
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        }
+    }
+
     public void onRouting(View v) throws IOException
     {
-        EditText txtLocation = (EditText)findViewById(R.id.txtLocation);
-        String strlocation=txtLocation.getText().toString();//Assigning search location to string
+        AutoCompleteTextView at=(AutoCompleteTextView)findViewById(R.id.txtLocation);
+        String strlocation=at.getText().toString();
+        //Assigning search location to string
 
         if (strlocation!=null || !strlocation.equals(""))//If the search location is not specified by the user, an error will be generated
         {

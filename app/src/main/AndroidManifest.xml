@@ -23,7 +23,10 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="AIzaSyAe0b1_VwGUPjqm82YkLCVYlGirPmQwJkE" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY_DIRECTION"
+            android:value="AIzaSyCwS15AjgnruNPf-a__1QeWv_dlSt7LL2s" />
 
         <activity
             android:name=".MainActivity"
@@ -42,7 +45,10 @@
             android:name=".SearchActivity"
             android:label="@string/title_activity_search" >
         </activity>
-       
+        <activity
+            android:name=".FAQ"
+            android:label="@string/title_activity_faq" >
+        </activity>
     </application>
 
 </manifest>

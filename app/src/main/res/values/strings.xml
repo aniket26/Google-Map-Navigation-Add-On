@@ -17,4 +17,6 @@
     <string name="hintSearch">Search</string>
     <string name="hint_location">Enter the location</string>
     <string name="title_activity_directions_jsonparser">DirectionsJSONParser</string>
+    <string name="changeView">Change View</string>
+    <string name="title_activity_faq">faq</string>
 </resources>
