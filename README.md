@@ -3,6 +3,8 @@ A Google Maps Navigation Add-On will allow users to find a convenient location t
 
 The application has 2 main features : Search and Navigate. The user can search for a particular location. For the purpose of navigation, the application takes three inputs i.e. the source, destination and an optional stop-off location and places three markers on each one of them and displays an optimal path connecting the 3 locations. We've also incorporated the zoom in and zoom out features. And the current location can also be selected in place of source using GPS co-ordinates. Also, the traffic conditions can be seen along with the satellite view of the map. Also, an FAQ section has been added in the Action Bar, which can be viewed on clicking the 3 vertical dots.
 
+The application also handles exceptions such as if the internet connection or gps is disabled, an alert dialogue box will be displayed asking user if he/she wants to enable the same. Also, if the user doesn't enter any input, a warning message is displayed asking the user to enter the input.
+
 MainActivity.java:
 This is the file from where execution starts i.e. the screen that appears when application launches. An application launcher icon has been added. In the first activity, an image has been added along with two buttons namely - Search and Navigate. On click on the Action Bar, an FAQ section can be seen.
 
