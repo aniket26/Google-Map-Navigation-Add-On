@@ -1,8 +1,13 @@
 package techinvogue.net.googlemapaddon;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
@@ -51,6 +56,23 @@ public class SearchActivity extends FragmentActivity {
     {
         AutoCompleteTextView at=(AutoCompleteTextView)findViewById(R.id.txtLocation);
         String strlocation=at.getText().toString();
+
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(this.CONNECTIVITY_SERVICE);
+
+        if (cm.getActiveNetworkInfo() == null) {
+            // There are no active networks.
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("No internet connection");  // Network not found
+            builder.setMessage("Want to Enable?"); // Want to enable?
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                }
+            });
+            builder.setNegativeButton("No", null);
+            builder.create().show();
+            return;
+        }
         //Assigning search location to string
 
         if (at.getText().toString().trim().equals(""))//an error message will be displayed if a location is not entered

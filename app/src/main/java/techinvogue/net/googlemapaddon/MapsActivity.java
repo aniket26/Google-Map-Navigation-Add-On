@@ -11,8 +11,10 @@ import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.EditText;
@@ -90,10 +92,12 @@ public class MapsActivity extends FragmentActivity {
             {
                 Geocoder geocoder = new Geocoder(this);
                 try {
+                    LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);//Receives current location
+                    ConnectivityManager cm = (ConnectivityManager) this.getSystemService(this.CONNECTIVITY_SERVICE);
 
                     //When source string is current location in any case we accept the GPS co-ordinates of the place the person is currently using mobile device from
                     if (strsrc.equalsIgnoreCase("Current Location")) {
-                        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);//Receives current location
+
                         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(this);
                             builder.setTitle("GPS Not Found");  // GPS not found
@@ -101,6 +105,19 @@ public class MapsActivity extends FragmentActivity {
                             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                                }
+                            });
+                            builder.setNegativeButton("No", null);
+                            builder.create().show();
+                            return;
+                        } else if (cm.getActiveNetworkInfo() == null) {
+                            // There are no active networks.
+                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                            builder.setTitle("No internet connection");  // Network not found
+                            builder.setMessage("Want to Enable?"); // Want to enable?
+                            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                                 }
                             });
                             builder.setNegativeButton("No", null);
@@ -121,81 +138,82 @@ public class MapsActivity extends FragmentActivity {
                         }
                     }
 
-                    //When user enters a string for his/her source location
-                    else {
-                        addressList0 = geocoder.getFromLocationName(strsrc, 1);//
-                        Address address0 = addressList0.get(0);
-                        srclatlng = new LatLng(address0.getLatitude(), address0.getLongitude());
-                        mMap.addMarker(new MarkerOptions().position(srclatlng).title("Source")); //adds marker to the source of current location
-                    }
-
-                    addressList1 = geocoder.getFromLocationName(strdestn, 1);
-                    if (nostopoff.equalsIgnoreCase("yes"))
-                        addressList2 = geocoder.getFromLocationName(strstopoff, 1);
-
-
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-                Address address1 = addressList1.get(0);
-
-                if (nostopoff.equalsIgnoreCase("yes")) // if the stop off location is entered, it will enter the route
-                {
-                    Address address2 = addressList2.get(0);
-                    stopofflatlng = new LatLng(address2.getLatitude(), address2.getLongitude());//stopofflatlng will store the latitude and longitude of the stop-off location
-                    mMap.addMarker(new MarkerOptions().position(stopofflatlng).title("Stop - Off Location"));//Will add a marker to the stop - off location
-                }
-
-                destnlatlng = new LatLng(address1.getLatitude(), address1.getLongitude()); //destnlatlng will store the latitude and longitude of the destination
-
-                mMap.addMarker(new MarkerOptions().position(destnlatlng).title("Destination")); //Will add a marker to the destination
-
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(destnlatlng));// Zoom in the camera to the destination place
-
-                if (nostopoff.equalsIgnoreCase("yes")) // if stop off location is entered
-                { // function to calculate the minimum distance from source to stop off
-                    float[] distance2 = new float[3];
-                    Location.distanceBetween(srclatlng.latitude, srclatlng.longitude, stopofflatlng.latitude, stopofflatlng.longitude, distance2);
-                    float min = distance2[0];
-                    for (int i = 0; i < distance2.length - 1; i++) {
-                        if (min > distance2[i + 1]) {
-                            min = distance2[i + 1];
-                            j = i + 1;
+                        //When user enters a string for his/her source location
+                        else
+                        {
+                            addressList0 = geocoder.getFromLocationName(strsrc, 1);//
+                            Address address0 = addressList0.get(0);
+                            srclatlng = new LatLng(address0.getLatitude(), address0.getLongitude());
+                            mMap.addMarker(new MarkerOptions().position(srclatlng).title("Source")); //adds marker to the source of current location
                         }
+
+                        addressList1 = geocoder.getFromLocationName(strdestn, 1);
+                        if (nostopoff.equalsIgnoreCase("yes"))
+                            addressList2 = geocoder.getFromLocationName(strstopoff, 1);
+
+
+                    }catch(IOException ex){
+                        ex.printStackTrace();
                     }
-                    // function to calculate the minimum distance from  stop off to destn
-                    float[] distance1 = new float[3];
-                    Location.distanceBetween(stopofflatlng.latitude, stopofflatlng.longitude, destnlatlng.latitude, destnlatlng.longitude, distance1);
-                    float min1 = distance1[0];
-                    for (int i = 0; i < distance1.length - 1; i++) {
-                        if (min1 > distance1[i + 1]) {
-                            min1 = distance1[i + 1];
-                            k = i + 1;
-                        }
+                    Address address1 = addressList1.get(0);
+
+                    if (nostopoff.equalsIgnoreCase("yes")) // if the stop off location is entered, it will enter the route
+                    {
+                        Address address2 = addressList2.get(0);
+                        stopofflatlng = new LatLng(address2.getLatitude(), address2.getLongitude());//stopofflatlng will store the latitude and longitude of the stop-off location
+                        mMap.addMarker(new MarkerOptions().position(stopofflatlng).title("Stop - Off Location"));//Will add a marker to the stop - off location
                     }
 
-                    url1 = makeURL(srclatlng.latitude, srclatlng.longitude, stopofflatlng.latitude, stopofflatlng.longitude);
-                    new connectAsyncTask(url1).execute();
-                    url11 = makeURL(stopofflatlng.latitude, stopofflatlng.longitude, destnlatlng.latitude, destnlatlng.longitude);
-                    new connectAsyncTask(url11).execute();
-                } else { // function to calculate the minimum distance from source to destn if the stop off location isnt entered
-                    float[] distance = new float[3];
-                    Location.distanceBetween(srclatlng.latitude, srclatlng.longitude, destnlatlng.latitude, destnlatlng.longitude, distance);
-                    float min5 = distance[0];
-                    for (int i = 0; i < distance.length - 1; i++) {
-                        if (min5 > distance[i + 1]) {
-                            min5 = distance[i + 1];
-                            s = i + 1;
+                    destnlatlng = new LatLng(address1.getLatitude(), address1.getLongitude()); //destnlatlng will store the latitude and longitude of the destination
+
+                    mMap.addMarker(new MarkerOptions().position(destnlatlng).title("Destination")); //Will add a marker to the destination
+
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(destnlatlng));// Zoom in the camera to the destination place
+
+                    if (nostopoff.equalsIgnoreCase("yes")) // if stop off location is entered
+                    { // function to calculate the minimum distance from source to stop off
+                        float[] distance2 = new float[3];
+                        Location.distanceBetween(srclatlng.latitude, srclatlng.longitude, stopofflatlng.latitude, stopofflatlng.longitude, distance2);
+                        float min = distance2[0];
+                        for (int i = 0; i < distance2.length - 1; i++) {
+                            if (min > distance2[i + 1]) {
+                                min = distance2[i + 1];
+                                j = i + 1;
+                            }
                         }
+                        // function to calculate the minimum distance from  stop off to destn
+                        float[] distance1 = new float[3];
+                        Location.distanceBetween(stopofflatlng.latitude, stopofflatlng.longitude, destnlatlng.latitude, destnlatlng.longitude, distance1);
+                        float min1 = distance1[0];
+                        for (int i = 0; i < distance1.length - 1; i++) {
+                            if (min1 > distance1[i + 1]) {
+                                min1 = distance1[i + 1];
+                                k = i + 1;
+                            }
+                        }
+
+                        url1 = makeURL(srclatlng.latitude, srclatlng.longitude, stopofflatlng.latitude, stopofflatlng.longitude);
+                        new connectAsyncTask(url1).execute();
+                        url11 = makeURL(stopofflatlng.latitude, stopofflatlng.longitude, destnlatlng.latitude, destnlatlng.longitude);
+                        new connectAsyncTask(url11).execute();
+                    } else { // function to calculate the minimum distance from source to destn if the stop off location isnt entered
+                        float[] distance = new float[3];
+                        Location.distanceBetween(srclatlng.latitude, srclatlng.longitude, destnlatlng.latitude, destnlatlng.longitude, distance);
+                        float min5 = distance[0];
+                        for (int i = 0; i < distance.length - 1; i++) {
+                            if (min5 > distance[i + 1]) {
+                                min5 = distance[i + 1];
+                                s = i + 1;
+                            }
+                        }
+
+                        url111 = makeURL(srclatlng.latitude, srclatlng.longitude, destnlatlng.latitude, destnlatlng.longitude);
+                        new connectAsyncTask(url111).execute();
                     }
 
-                    url111 = makeURL(srclatlng.latitude, srclatlng.longitude, destnlatlng.latitude, destnlatlng.longitude);
-                    new connectAsyncTask(url111).execute();
                 }
-
             }
         }
-    }
 
     public String makeURL(double sourcelat, double sourcelog, double destlat, double destlog) { // function generates the url for the route from src and destn entered as function parameters, the parameters could either be the source or the stop off location or the destination
         StringBuilder urlString = new StringBuilder();
