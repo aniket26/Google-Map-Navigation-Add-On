@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -54,7 +54,9 @@ public class SearchActivity extends FragmentActivity {
 
     public void onRouting(View v) throws IOException
     {
-        AutoCompleteTextView at=(AutoCompleteTextView)findViewById(R.id.txtLocation);
+        mMap.clear();
+
+        EditText at=(EditText)findViewById(R.id.txtLocation);
         String strlocation=at.getText().toString();
 
         ConnectivityManager cm = (ConnectivityManager) this.getSystemService(this.CONNECTIVITY_SERVICE);

@@ -64,7 +64,9 @@ public class MapsActivity extends FragmentActivity {
     }
 
 
-    public void onRouting(View v) throws IOException {
+    public void onRouting(View v) throws IOException
+    {
+        mMap.clear();
         String nostopoff = null;
         EditText txtsrc = (EditText) findViewById(R.id.txtSrc);
         String strsrc = txtsrc.getText().toString();              //parsing the edit text into string for source location
