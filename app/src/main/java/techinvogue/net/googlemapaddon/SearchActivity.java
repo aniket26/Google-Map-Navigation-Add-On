@@ -53,24 +53,28 @@ public class SearchActivity extends FragmentActivity {
         String strlocation=at.getText().toString();
         //Assigning search location to string
 
-        if (strlocation!=null || !strlocation.equals(""))//If the search location is not specified by the user, an error will be generated
-        {
-            Geocoder geocoder = new Geocoder(this);
-            try
+        if (at.getText().toString().trim().equals(""))//an error message will be displayed if a location is not entered
+            at.setError(" Enter a location");
+
+        else {
+            if (strlocation != null || !strlocation.equals(""))//If the search location is not specified by the user, an error will be generated
+
             {
-                addressList0 = geocoder.getFromLocationName(strlocation, 1);
+                Geocoder geocoder = new Geocoder(this);
+                try {
+                    addressList0 = geocoder.getFromLocationName(strlocation, 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                Address address0 = addressList0.get(0);
+                LatLng location_latlng = new LatLng(address0.getLatitude(), address0.getLongitude());//the latlng will store latitude and longitude of the search location
+
+                mMap.addMarker(new MarkerOptions().position(location_latlng).title("Location"));//a marker will be added at the search location
+
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(location_latlng));
+
             }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-
-            Address address0 = addressList0.get(0);
-            LatLng location_latlng = new LatLng(address0.getLatitude(), address0.getLongitude());//the latlng will store latitude and longitude of the search location
-
-            mMap.addMarker(new MarkerOptions().position(location_latlng).title("Location"));//a marker will be added at the search location
-
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(location_latlng));
 
         }
     }
