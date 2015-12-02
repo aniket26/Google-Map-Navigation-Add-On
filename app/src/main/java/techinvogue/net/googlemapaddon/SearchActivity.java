@@ -3,6 +3,8 @@ package techinvogue.net.googlemapaddon;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.ConnectivityManager;
@@ -50,6 +52,12 @@ public class SearchActivity extends FragmentActivity {
         {
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     public void onRouting(View v) throws IOException
