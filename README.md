@@ -29,3 +29,4 @@ INTERNET, ACCESS_NETWORK_STATE, WRITE_EXTERNAL_STORAGE, READ_GSERVICES, ACCESS_C
 
 We've also used Google Maps API Key for the Android Version
 
+The orientation of the application has been set to Potrait view for better visualization.
